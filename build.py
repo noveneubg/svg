@@ -14,7 +14,7 @@ def js_safe(s):
 
 html = read("index.html")
 
-html = re.sub(r'<script>\(function\(s\)\{s\.dataset\.zone.*?</script>\n?', '', html, count=1, flags=re.S)
+html = re.sub(r'<script>if \(typeof initAds === "function"\) initAds\(\);</script>\n?', '', html, count=1)
 html = re.sub(r'<script async src="https://www\.googletagmanager\.com[^>]*></script>\n?', '', html, count=1)
 html = re.sub(r'<script>\n\s*window\.dataLayer.*?</script>\n?', '', html, count=1, flags=re.S)
 assert "al5sm.com" not in html and "googletagmanager" not in html and "dataLayer" not in html
@@ -33,6 +33,8 @@ for name in ["lucide.js", "lumi.js", "core.js", "tabs.js", "ai.js", "launch.js",
         code = code.replace('"wss://" + location.host + "/wisp/"', '"wss://frostedbrowser.cfd/wisp/"')
     if name == "ai.js":
         code = code.replace('fetch("/api/ai"', f'fetch("{HOST}/api/ai"')
+    if name in ("core.js", "settings.js"):
+        code = code.replace('fetch("/api/keys/check"', f'fetch("{HOST}/api/keys/check"')
     tag = re.compile(r'<script src="/js/' + re.escape(name.split(".")[0]) + r'\.js[^"]*"></script>')
     assert tag.search(html), name
     block = "<script>\n" + js_safe(code) + "\n</script>"
