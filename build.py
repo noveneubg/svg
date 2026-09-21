@@ -27,7 +27,7 @@ html = re.sub(
     count=1,
 )
 
-for name in ["lucide.js", "lumi.js", "core.js", "tabs.js", "ai.js", "launch.js", "settings.js", "boot.js"]:
+for name in ["lucide.js", "lumi.js", "core.js", "tabs.js", "ai.js", "launch.js", "raccoon.js", "settings.js", "boot.js"]:
     code = read(f"js/{name}")
     if name == "boot.js":
         code = code.replace('"wss://" + location.host + "/wisp/"', '"wss://frostedbrowser.cfd/wisp/"')
@@ -35,6 +35,8 @@ for name in ["lucide.js", "lumi.js", "core.js", "tabs.js", "ai.js", "launch.js",
         code = code.replace('fetch("/api/ai"', f'fetch("{HOST}/api/ai"')
     if name in ("core.js", "settings.js"):
         code = code.replace('fetch("/api/keys/check"', f'fetch("{HOST}/api/keys/check"')
+    if name == "raccoon.js":
+        code = code.replace('fetch("/mail/api/v1/', f'fetch("{HOST}/mail/api/v1/')
     tag = re.compile(r'<script src="/js/' + re.escape(name.split(".")[0]) + r'\.js[^"]*"></script>')
     assert tag.search(html), name
     block = "<script>\n" + js_safe(code) + "\n</script>"
@@ -59,6 +61,7 @@ assert 'src="/js/' not in html
 assert 'location.host + "/wisp/"' not in html
 assert 'frostedbrowser.cfd/wisp/"' in html
 assert 'fetch("/api/ai"' not in html
+assert 'fetch("/mail/api/v1/' not in html
 assert '"/sail/scram/' not in html
 assert '"/sw.js"' not in html
 
@@ -237,7 +240,7 @@ def pull_inline_scripts(s):
 
 
 xhtml, script_blobs = pull_inline_scripts(xhtml)
-assert len(script_blobs) == 11, f"expected 11 inline scripts, got {len(script_blobs)}"
+assert len(script_blobs) == 12, f"expected 12 inline scripts, got {len(script_blobs)}"
 assert not re.search(r"^[ \t]*<script(?![^>]*src=)", xhtml, flags=re.M), "stray inline script"
 for b in script_blobs:
     assert "</script" not in b.replace("<\\/script", ""), "inline terminator hazard"
