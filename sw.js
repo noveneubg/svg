@@ -1,4 +1,4 @@
-importScripts("scram/controller.sw.js");
+importScripts("engine/nve.sw.js");
 
 addEventListener("install", () => {
   self.skipWaiting();
@@ -9,7 +9,7 @@ addEventListener("activate", (e) => {
 });
 
 addEventListener("fetch", (e) => {
-  if ($scramjetController.shouldRoute(e)) {
-    e.respondWith($scramjetController.route(e));
+  if ($nvectrl.shouldRoute(e)) {
+    e.respondWith($nvectrl.route(e));
   }
 });

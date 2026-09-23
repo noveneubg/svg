@@ -42,8 +42,8 @@ for name in ["lucide.js", "lumi.js", "core.js", "tabs.js", "ai.js", "launch.js",
     html = tag.sub(lambda _: block, html, count=1)
 
 for sail, pattern in [
-    ("sail/scram/scramjet.js", r'<script src="/sail/scram/scramjet\.js"></script>'),
-    ("sail/scram/controller.api.js", r'<script src="/sail/scram/controller\.api\.js"></script>'),
+    ("sail/engine/nve.js", r'<script src="/sail/engine/nve\.js"></script>'),
+    ("sail/engine/nve.api.js", r'<script src="/sail/engine/nve\.api\.js"></script>'),
 ]:
     code = js_safe(read(sail))
     tag = re.compile(pattern)
@@ -68,15 +68,16 @@ import shutil
 
 ENGINE_FILES = [
     ("sw.js", "sw.js"),
-    ("scram/controller.sw.js", "scram/controller.sw.js"),
-    ("sail/scram/scramjet.js", "sail/scram/scramjet.js"),
-    ("sail/scram/controller.inject.js", "sail/scram/controller.inject.js"),
-    ("sail/scram/scramjet.wasm", "sail/scram/scramjet.wasm"),
+    ("engine/nve.sw.js", "engine/nve.sw.js"),
+    ("sail/engine/nve.js", "sail/engine/nve.js"),
+    ("sail/engine/nve.inject.js", "sail/engine/nve.inject.js"),
+    ("sail/engine/nve.wasm", "sail/engine/nve.wasm"),
+    ("sail/transport.js", "sail/transport.js"),
 ]
 for src_rel, dst_rel in ENGINE_FILES:
     data = (SRC / src_rel).read_bytes()
     if src_rel == "sw.js":
-        data = data.replace(b'"/scram/controller.sw.js"', b'"scram/controller.sw.js"')
+        data = data.replace(b'"/engine/nve.sw.js"', b'"engine/nve.sw.js"')
     dst = OUT / dst_rel
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_bytes(data)

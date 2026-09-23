@@ -241,7 +241,7 @@ class Tap {
 "./packages/core/src/client/client.ts"(__unused_rspack_module, __webpack_exports__, __webpack_require__) {
 __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
-  ScramjetClient: () => (ScramjetClient)
+  NveClient: () => (NveClient)
 });
 /* import */ var _mercuryworkshop_proxy_transports__rspack_import_0 = __webpack_require__("./node_modules/.pnpm/@mercuryworkshop+proxy-transports@1.0.2/node_modules/@mercuryworkshop/proxy-transports/dist/index.mjs");
 /* import */ var _symbols__rspack_import_1 = __webpack_require__("./packages/core/src/symbols.ts");
@@ -298,7 +298,7 @@ function findBox(global, seen) {
     }
     return null;
 }
-class ScramjetClient {
+class NveClient {
     global;
     init;
     locationProxy;
@@ -325,7 +325,7 @@ class ScramjetClient {
         this.global = global;
         this.init = init;
         if (_symbols__rspack_import_1.SCRAMJETCLIENT in global) {
-            dbg.error("attempted to initialize a scramjet client, but one is already loaded - this is very bad");
+            dbg.error("attempted to initialize a client, but one is already loaded - this is very bad");
             throw new _shared_snapshot__rspack_import_10.Error();
         }
         if (_entry__rspack_import_7.iswindow) {
@@ -339,7 +339,7 @@ class ScramjetClient {
         }
         this.box.registerClient(this, global);
         this.context = init.context;
-        if (init.initHeaders) this.initHeaders = _shared__rspack_import_6.ScramjetHeaders.fromRawHeaders(init.initHeaders);
+        if (init.initHeaders) this.initHeaders = _shared__rspack_import_6.NveHeaders.fromRawHeaders(init.initHeaders);
         this.history = init.history;
         this.context.hooks = {
             rewriter: this.hooks.rewriter
@@ -453,7 +453,7 @@ class ScramjetClient {
                 }
                 if (!frame.name) {
                     // the top frame is scramjet-controlled, but it has no name. this is user error
-                    dbg.error("YOU NEED TO USE `new ScramjetFrame()`! DIRECT IFRAMES WILL NOT WORK");
+                    dbg.error("YOU NEED TO USE `new NveFrame()`! DIRECT IFRAMES WILL NOT WORK");
                     return null;
                 }
                 return frame.name;
@@ -481,7 +481,7 @@ class ScramjetClient {
                         }
                         if (!frame.name) {
                             // the parent frame is scramjet-controlled, but it has no name. this is user error
-                            dbg.error("YOU NEED TO USE `new ScramjetFrame()`! DIRECT IFRAMES WILL NOT WORK");
+                            dbg.error("YOU NEED TO USE `new NveFrame()`! DIRECT IFRAMES WILL NOT WORK");
                             return null;
                         }
                         return frame.name;
@@ -491,7 +491,7 @@ class ScramjetClient {
                         const frame = client.descriptors.get("window.frameElement", client.global);
                         if (!frame.name) {
                             // the parent frame is not scramjet-controlled, so we can't get a parent frame name
-                            dbg.error("YOU NEED TO USE `new ScramjetFrame()`! DIRECT IFRAMES WILL NOT WORK");
+                            dbg.error("YOU NEED TO USE `new NveFrame()`! DIRECT IFRAMES WILL NOT WORK");
                             return null;
                         }
                         return frame.name;
@@ -522,7 +522,7 @@ class ScramjetClient {
         global[_symbols__rspack_import_1.SCRAMJETCLIENT] = this;
     }
     /** Apply document injection init when a client was already installed (e.g. early contentWindow). */ syncDocumentInit(init) {
-        this.initHeaders = _shared__rspack_import_6.ScramjetHeaders.fromRawHeaders(init.initHeaders);
+        this.initHeaders = _shared__rspack_import_6.NveHeaders.fromRawHeaders(init.initHeaders);
         this.history = init.history;
         if (init.cookies !== undefined) {
             this.context.cookieJar.load(init.cookies);
@@ -857,8 +857,8 @@ __webpack_require__.d(__webpack_exports__, {
                 },
                 has (target, prop) {
                     if (typeof prop === "symbol") return (0,_shared_snapshot__rspack_import_0.Reflect_has)(target, prop);
-                    if (prop.startsWith("scramjet-attr-")) return false;
-                    if (map[prop]?.name?.startsWith("scramjet-attr-")) return false;
+                    if (prop.startsWith("nve-attr-")) return false;
+                    if (map[prop]?.name?.startsWith("nve-attr-")) return false;
                     return (0,_shared_snapshot__rspack_import_0.Reflect_has)(target, prop);
                 }
             });
@@ -1348,8 +1348,8 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
             if (name.startsWith("scramjet-attr")) {
                 return ctx.return(null);
             }
-            if (client.natives.call("Element.prototype.hasAttribute", ctx.this, `scramjet-attr-${name}`)) {
-                const attrib = ctx.fn.call(ctx.this, `scramjet-attr-${name}`);
+            if (client.natives.call("Element.prototype.hasAttribute", ctx.this, `nve-attr-${name}`)) {
+                const attrib = ctx.fn.call(ctx.this, `nve-attr-${name}`);
                 if (attrib === null) return ctx.return("");
                 return ctx.return(attrib);
             }
@@ -1389,12 +1389,12 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
                 const ret = ruleList.fn(value, client.context, client.meta, collectAttributeMap(client, ctx.this, name, value));
                 if (ret == null) {
                     client.natives.call("Element.prototype.removeAttribute", ctx.this, name);
-                    ctx.fn.call(ctx.this, `scramjet-attr-${name}`, value);
+                    ctx.fn.call(ctx.this, `nve-attr-${name}`, value);
                     ctx.return(undefined);
                     return;
                 }
                 ctx.args[1] = ret;
-                ctx.fn.call(ctx.this, `scramjet-attr-${ctx.args[0]}`, value);
+                ctx.fn.call(ctx.this, `nve-attr-${ctx.args[0]}`, value);
             }
         }
     });
@@ -1416,7 +1416,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
             });
             if (ruleList) {
                 ctx.args[2] = ruleList.fn(value, client.context, client.meta, collectAttributeMap(client, ctx.this, name, value));
-                client.natives.call("Element.prototype.setAttribute", ctx.this, `scramjet-attr-${ctx.args[1]}`, value);
+                client.natives.call("Element.prototype.setAttribute", ctx.this, `nve-attr-${ctx.args[1]}`, value);
             }
         }
     });
@@ -1443,7 +1443,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
             const name = (0,_shared_snapshot__rspack_import_1.String)(ctx.args[0]);
             if (name.startsWith("scramjet-attr")) return ctx.return(undefined);
             if (client.natives.call("Element.prototype.hasAttribute", ctx.this, name)) {
-                ctx.fn.call(ctx.this, `scramjet-attr-${ctx.args[0]}`);
+                ctx.fn.call(ctx.this, `nve-attr-${ctx.args[0]}`);
             }
         }
     });
@@ -1452,7 +1452,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
             const name = (0,_shared_snapshot__rspack_import_1.String)(ctx.args[0]);
             if (name.startsWith("scramjet-attr")) return ctx.return(false);
             if (client.natives.call("Element.prototype.hasAttribute", ctx.this, name)) {
-                ctx.fn.call(ctx.this, `scramjet-attr-${ctx.args[0]}`);
+                ctx.fn.call(ctx.this, `nve-attr-${ctx.args[0]}`);
             }
         }
     });
@@ -1465,7 +1465,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
             const scriptBlockType = client.box.instanceof(ctx.this, "HTMLScriptElement") ? scriptBlockTypeForElement(client, ctx.this) : null;
             if (client.box.instanceof(ctx.this, "HTMLScriptElement") && (0,_shared_mime__rspack_import_8.isScriptType)(scriptBlockType)) {
                 newval = (0,_rewriters_js__rspack_import_5.rewriteJs)(html, "(anonymous script element)", client.context, client.meta, (0,_shared_mime__rspack_import_8.isModuleScriptType)(scriptBlockType));
-                client.natives.call("Element.prototype.setAttribute", ctx.this, "scramjet-attr-script-source-src", (0,_shared_util__rspack_import_2.bytesToBase64)((0,_shared_snapshot__rspack_import_1.TextEncoder_encode)(newval)));
+                client.natives.call("Element.prototype.setAttribute", ctx.this, "nve-attr-script-source-src", (0,_shared_util__rspack_import_2.bytesToBase64)((0,_shared_snapshot__rspack_import_1.TextEncoder_encode)(newval)));
             } else if (client.box.instanceof(ctx.this, "HTMLStyleElement")) {
                 newval = (0,_rewriters_css__rspack_import_3.rewriteCss)(html, client.context, client.meta);
             } else {
@@ -1485,7 +1485,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
         },
         get (ctx) {
             if (client.box.instanceof(ctx.this, "HTMLScriptElement")) {
-                const scriptSource = client.natives.call("Element.prototype.getAttribute", ctx.this, "scramjet-attr-script-source-src");
+                const scriptSource = client.natives.call("Element.prototype.getAttribute", ctx.this, "nve-attr-script-source-src");
                 if (scriptSource) {
                     return (0,_shared_snapshot__rspack_import_1.atob)(scriptSource);
                 }
@@ -1501,7 +1501,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
         const scriptBlockType = client.box.instanceof(element, "HTMLScriptElement") ? scriptBlockTypeForElement(client, element) : null;
         if (client.box.instanceof(element, "HTMLScriptElement") && (0,_shared_mime__rspack_import_8.isScriptType)(scriptBlockType)) {
             const newval = (0,_rewriters_js__rspack_import_5.rewriteJs)(value, "(anonymous script element)", client.context, client.meta, (0,_shared_mime__rspack_import_8.isModuleScriptType)(scriptBlockType));
-            client.natives.call("Element.prototype.setAttribute", element, "scramjet-attr-script-source-src", (0,_shared_util__rspack_import_2.bytesToBase64)((0,_shared_snapshot__rspack_import_1.TextEncoder_encode)(value)));
+            client.natives.call("Element.prototype.setAttribute", element, "nve-attr-script-source-src", (0,_shared_util__rspack_import_2.bytesToBase64)((0,_shared_snapshot__rspack_import_1.TextEncoder_encode)(value)));
             return newval;
         } else if (client.box.instanceof(element, "HTMLStyleElement")) {
             return (0,_rewriters_css__rspack_import_3.rewriteCss)(value, client.context, client.meta);
@@ -1511,7 +1511,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
     };
     const getTextForElement = (element, text)=>{
         if (client.box.instanceof(element, "HTMLScriptElement")) {
-            const scriptSource = client.natives.call("Element.prototype.getAttribute", element, "scramjet-attr-script-source-src");
+            const scriptSource = client.natives.call("Element.prototype.getAttribute", element, "nve-attr-script-source-src");
             if (scriptSource) return (0,_shared_snapshot__rspack_import_1.atob)(scriptSource);
             return text;
         }
@@ -1613,7 +1613,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
     // 					client.natives.call(
     // 						"Element.prototype.setAttribute",
     // 						ctx.this,
-    // 						"scramjet-attr-script-source-src",
+    // 						"nve-attr-script-source-src",
     // 						bytesToBase64(encoder.encode(newval))
     // 					);
     // 					node.data = newval;
@@ -2092,7 +2092,7 @@ function getOwnPropertyDescriptorHandler(target, prop) {
 "./packages/core/src/client/index.ts"(__unused_rspack_module, __webpack_exports__, __webpack_require__) {
 __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
-  ScramjetClient: () => (/* reexport safe */ _client__rspack_import_0.ScramjetClient),
+  NveClient: () => (/* reexport safe */ _client__rspack_import_0.NveClient),
   createLocationProxy: () => (/* reexport safe */ _location__rspack_import_4.createLocationProxy),
   getOwnPropertyDescriptorHandler: () => (/* reexport safe */ _helpers__rspack_import_3.getOwnPropertyDescriptorHandler),
   isdedicated: () => (/* reexport safe */ _entry__rspack_import_1.isdedicated),
@@ -2579,7 +2579,7 @@ const realOnEvent = (0,_shared_snapshot__rspack_import_2.Symbol_for)("scramjet o
             },
             source () {
                 if (this.source === null) return null;
-                // const scram: ScramjetClient = this.source[SCRAMJETCLIENT];
+                // const scram: NveClient = this.source[SCRAMJETCLIENT];
                 // if (scram) return scram.globalProxy;
                 return this.source;
             },
@@ -4135,7 +4135,7 @@ async function doHandleFetch(handler, request) {
     if (parsed.hadExtraParams && (0,_util__rspack_import_4.isDocument)(parsed)) {
         const location = (0,_rewriters_url__rspack_import_1.rewriteUrl)(parsed.url, handler.context, parsed.meta);
         if (location !== request.rawUrl.href) {
-            const responseHeaders = new _shared__rspack_import_3.ScramjetHeaders();
+            const responseHeaders = new _shared__rspack_import_3.NveHeaders();
             responseHeaders.set("location", location);
             return {
                 body: "",
@@ -4148,13 +4148,13 @@ async function doHandleFetch(handler, request) {
     const newheaders = (0,_headers__rspack_import_7.rewriteRequestHeaders)(request, handler, parsed);
     let responseBody;
     const response = await doNetworkFetch(handler, request, parsed, newheaders);
-    // set-cookie needs to take the raw headers. after this, we can flatten the headers into a ScramjetHeaders object
+    // set-cookie needs to take the raw headers. after this, we can flatten the headers into a NveHeaders object
     await handleCookies(handler, request, parsed, response.rawHeaders);
     if ((0,_util__rspack_import_4.isDocument)(parsed)) {
         // for document.referer
         parsed.trackedClient?.history.push({
             url: parsed.url.href,
-            refererPolicy: _shared__rspack_import_3.ScramjetHeaders.fromRawHeaders(response.rawHeaders).get("referrer-policy")
+            refererPolicy: _shared__rspack_import_3.NveHeaders.fromRawHeaders(response.rawHeaders).get("referrer-policy")
         });
     }
     const responseHeaders = await (0,_headers__rspack_import_7.rewriteResponseHeaders)(handler, request, parsed, response.rawHeaders);
@@ -4277,7 +4277,7 @@ async function handleBlobOrDataUrlFetch(handler, request, parsed) {
     if (response.body) {
         body = await (0,_body__rspack_import_5.rewriteBody)(handler, request, parsed, response);
     }
-    const headers = _shared__rspack_import_3.ScramjetHeaders.fromRawHeaders(response.rawHeaders);
+    const headers = _shared__rspack_import_3.NveHeaders.fromRawHeaders(response.rawHeaders);
     // blob urls actually *can* set charsets, so we need to normalize them if it goes down the html path
     (0,_util__rspack_import_4.normalizeContentType)(parsed, headers);
     if (handler.crossOriginIsolated) {
@@ -4370,7 +4370,7 @@ function rewriteLinkHeader(link, context, meta) {
     });
 }
 async function rewriteResponseHeaders(handler, request, parsed, rawHeaders) {
-    const headers = _shared__rspack_import_0.ScramjetHeaders.fromRawHeaders(rawHeaders);
+    const headers = _shared__rspack_import_0.NveHeaders.fromRawHeaders(rawHeaders);
     for (const cspHeader of SEC_HEADERS){
         headers.delete(cspHeader);
     }
@@ -4712,8 +4712,8 @@ function isLoopbackHost(hostname) {
 "./packages/core/src/fetch/index.ts"(__unused_rspack_module, __webpack_exports__, __webpack_require__) {
 __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
-  ScramjetFetchHandler: () => (ScramjetFetchHandler),
-  ScramjetFetchTrackedClient: () => (ScramjetFetchTrackedClient)
+  NveFetchHandler: () => (NveFetchHandler),
+  NveFetchTrackedClient: () => (NveFetchTrackedClient)
 });
 /* import */ var _mercuryworkshop_proxy_transports__rspack_import_0 = __webpack_require__("./node_modules/.pnpm/@mercuryworkshop+proxy-transports@1.0.2/node_modules/@mercuryworkshop/proxy-transports/dist/index.mjs");
 /* import */ var _Tap__rspack_import_1 = __webpack_require__("./packages/core/src/Tap.ts");
@@ -4723,7 +4723,7 @@ __webpack_require__.d(__webpack_exports__, {
 
 
 
-class ScramjetFetchTrackedClient {
+class NveFetchTrackedClient {
     clientId;
     history = [];
     constructor(clientId){
@@ -4731,7 +4731,7 @@ class ScramjetFetchTrackedClient {
     }
 }
 // eslint-disable-next-line scramjet-core/no-globals
-class ScramjetFetchHandler extends EventTarget {
+class NveFetchHandler extends EventTarget {
     client;
     crossOriginIsolated = false;
     context;
@@ -4841,7 +4841,7 @@ function parseRequest(request, handler) {
     if (clientId) {
         trackedClient = handler.trackedClients.get(clientId);
         if (!trackedClient) {
-            trackedClient = new ___rspack_import_2.ScramjetFetchTrackedClient(clientId);
+            trackedClient = new ___rspack_import_2.NveFetchTrackedClient(clientId);
             handler.trackedClients.set(clientId, trackedClient);
         }
     }
@@ -5228,9 +5228,9 @@ class CookieJar {
 "./packages/core/src/shared/headers.ts"(__unused_rspack_module, __webpack_exports__, __webpack_require__) {
 __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
-  ScramjetHeaders: () => (ScramjetHeaders)
+  NveHeaders: () => (NveHeaders)
 });
-class ScramjetHeaders {
+class NveHeaders {
     headers = {};
     set(key, v) {
         this.headers[key.toLowerCase()] = v;
@@ -5266,7 +5266,7 @@ class ScramjetHeaders {
         return native;
     }
     static fromRawHeaders(raw) {
-        const h = new ScramjetHeaders();
+        const h = new NveHeaders();
         for (const [k, v] of raw){
             if (h.has(k)) {
             // console.debug(
@@ -5278,14 +5278,14 @@ class ScramjetHeaders {
         return h;
     }
     static fromNativeHeaders(native) {
-        const h = new ScramjetHeaders();
+        const h = new NveHeaders();
         for (const [k, v] of native.entries()){
             h.set(k, v);
         }
         return h;
     }
     clone() {
-        const newh = new ScramjetHeaders();
+        const newh = new NveHeaders();
         for(const k in this.headers){
             newh.set(k, this.headers[k]);
         }
@@ -5491,7 +5491,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
   CookieJar: () => (/* reexport safe */ _cookie__rspack_import_1.CookieJar),
   IncrementalHtmlRewriter: () => (/* reexport safe */ _rewriters__rspack_import_5.IncrementalHtmlRewriter),
-  ScramjetHeaders: () => (/* reexport safe */ _headers__rspack_import_2.ScramjetHeaders),
+  NveHeaders: () => (/* reexport safe */ _headers__rspack_import_2.NveHeaders),
   flagEnabled: () => (flagEnabled),
   getRewriter: () => (/* reexport safe */ _rewriters__rspack_import_5.getRewriter),
   getScriptBlockTypeString: () => (/* reexport safe */ _mime__rspack_import_4.getScriptBlockTypeString),
@@ -6077,7 +6077,7 @@ function rewriteHtmlInner(html, context, meta, htmlcontext) {
     if (htmlcontext.loadScripts) {
         const script = (src)=>new domhandler__rspack_import_0.Element("script", {
                 src,
-                "scramjet-injected": "true"
+                "nve-injected": "true"
             });
         const injectScripts = context.interface.getInjectScripts(meta, handler, htmlcontext, script);
         if (isQuirky) {
@@ -6127,12 +6127,12 @@ function unrewriteHtml(html, foreignContext) {
     function traverse(node) {
         if ("attribs" in node) {
             for(const key in node.attribs){
-                if (key == "scramjet-attr-script-source-src") {
+                if (key == "nve-attr-script-source-src") {
                     if (node.children[0] && "data" in node.children[0]) node.children[0].data = (0,_shared_snapshot__rspack_import_9.atob)(node.attribs[key]);
                     continue;
                 }
-                if (key.startsWith("scramjet-attr-")) {
-                    node.attribs[key.slice("scramjet-attr-".length)] = node.attribs[key];
+                if (key.startsWith("nve-attr-")) {
+                    node.attribs[key.slice("nve-attr-".length)] = node.attribs[key];
                     delete node.attribs[key];
                 }
             }
@@ -6166,14 +6166,14 @@ function traverseParsedHtml(node, context, meta) {
                         else {
                             node.attribs[attr] = v;
                         }
-                        node.attribs[`scramjet-attr-${attr}`] = value;
+                        node.attribs[`nve-attr-${attr}`] = value;
                     }
                 }
             }
         }
         for (const [attr, value] of (0,_shared_snapshot__rspack_import_9.Object_entries)(node.attribs)){
             if (eventAttributes.includes(attr)) {
-                node.attribs[`scramjet-attr-${attr}`] = value;
+                node.attribs[`nve-attr-${attr}`] = value;
                 node.attribs[attr] = (0,_rewriters_js__rspack_import_4.rewriteJs)(value, `(inline ${attr} on element)`, context, meta);
             }
         }
@@ -6204,7 +6204,7 @@ function traverseParsedHtml(node, context, meta) {
         if ((0,_shared_mime__rspack_import_11.isScriptType)(scriptBlockType)) {
             let js = node.children[0].data;
             const module = (0,_shared_mime__rspack_import_11.isModuleScriptType)(scriptBlockType);
-            node.attribs["scramjet-attr-script-source-src"] = (0,_shared_util__rspack_import_7.bytesToBase64)((0,_shared_snapshot__rspack_import_9.TextEncoder_encode)(js));
+            node.attribs["nve-attr-script-source-src"] = (0,_shared_util__rspack_import_7.bytesToBase64)((0,_shared_snapshot__rspack_import_9.TextEncoder_encode)(js));
             const htmlcomment = /<!--[\s\S]*?-->/g;
             js = js.replace(htmlcomment, "");
             node.children[0].data = (0,_rewriters_js__rspack_import_4.rewriteJs)(js, "(inline script element)", context, meta, module);
@@ -13083,10 +13083,10 @@ __webpack_require__.d(__webpack_exports__, {
   Plugin: () => (/* reexport safe */ _Tap__rspack_import_5.Plugin),
   SCRAMJETCLIENT: () => (/* reexport safe */ _symbols__rspack_import_3.SCRAMJETCLIENT),
   SCRAMJETCLIENTNAME: () => (/* reexport safe */ _symbols__rspack_import_3.SCRAMJETCLIENTNAME),
-  ScramjetClient: () => (/* reexport safe */ _client__rspack_import_9.ScramjetClient),
-  ScramjetFetchHandler: () => (/* reexport safe */ _fetch__rspack_import_7.ScramjetFetchHandler),
-  ScramjetFetchTrackedClient: () => (/* reexport safe */ _fetch__rspack_import_7.ScramjetFetchTrackedClient),
-  ScramjetHeaders: () => (/* reexport safe */ _shared__rspack_import_6.ScramjetHeaders),
+  NveClient: () => (/* reexport safe */ _client__rspack_import_9.NveClient),
+  NveFetchHandler: () => (/* reexport safe */ _fetch__rspack_import_7.NveFetchHandler),
+  NveFetchTrackedClient: () => (/* reexport safe */ _fetch__rspack_import_7.NveFetchTrackedClient),
+  NveHeaders: () => (/* reexport safe */ _shared__rspack_import_6.NveHeaders),
   Tap: () => (/* reexport safe */ _Tap__rspack_import_5.Tap),
   createLocationProxy: () => (/* reexport safe */ _client__rspack_import_9.createLocationProxy),
   defaultConfig: () => (defaultConfig),
@@ -13209,7 +13209,7 @@ if (false) {}
 
 })();
 
-self.$scramjet = __webpack_exports__;
+self.$nve = __webpack_exports__;
 })()
 ;
 //# sourceMappingURL=scramjet.js.map

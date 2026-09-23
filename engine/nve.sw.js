@@ -1,4 +1,4 @@
-var $scramjetController;
+var $nvectrl;
 (() => {
 var __webpack_modules__ = ({
 "./packages/rpc/index.ts"(__unused_rspack_module, __webpack_exports__, __webpack_require__) {
@@ -320,7 +320,7 @@ setTimeout(async ()=>{
 
 })();
 
-$scramjetController = __webpack_exports__;
+$nvectrl = __webpack_exports__;
 })()
 ;
 //# sourceMappingURL=controller.sw.js.map
