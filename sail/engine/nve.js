@@ -436,7 +436,7 @@ class NveClient {
                 // accessing parent was blocked by CORS, we're in a frame but the parent is cross origin
                 }
                 try {
-                    // find the topmost frame that's controlled by scramjet, stopping before the real top frame
+                    
                     while(currentWin.parent.window !== currentWin.window){
                         if (!currentWin.parent.window[_symbols__rspack_import_1.SCRAMJETCLIENT]) break;
                         currentWin = currentWin.parent.window;
@@ -447,12 +447,12 @@ class NveClient {
                 const curclient = currentWin[_symbols__rspack_import_1.SCRAMJETCLIENT];
                 const frame = curclient.descriptors.get("window.frameElement", currentWin);
                 if (!frame) {
-                    // we're inside an iframe, but the top frame is scramjet-controlled and top level, so we can't get a top frame name
+                    
                     // or we're cross-origin and frameElement doesn't exist. that's a TODO because this won't work
                     return null;
                 }
                 if (!frame.name) {
-                    // the top frame is scramjet-controlled, but it has no name. this is user error
+                    
                     dbg.error("YOU NEED TO USE `new NveFrame()`! DIRECT IFRAMES WILL NOT WORK");
                     return null;
                 }
@@ -472,25 +472,25 @@ class NveClient {
                     }
                     const parentWin = client.global.parent.window;
                     if (parentWin[_symbols__rspack_import_1.SCRAMJETCLIENT]) {
-                        // we're inside an iframe, and the parent is scramjet-controlled
+                        
                         const parentClient = parentWin[_symbols__rspack_import_1.SCRAMJETCLIENT];
                         const frame = parentClient.descriptors.get("window.frameElement", parentWin);
                         if (!frame) {
-                            // parent is scramjet controlled and top-level. there is no parent frame name
+                            
                             return null;
                         }
                         if (!frame.name) {
-                            // the parent frame is scramjet-controlled, but it has no name. this is user error
+                            
                             dbg.error("YOU NEED TO USE `new NveFrame()`! DIRECT IFRAMES WILL NOT WORK");
                             return null;
                         }
                         return frame.name;
                     } else {
-                        // we're inside an iframe, and the parent is not scramjet-controlled
+                        
                         // return our own frame name
                         const frame = client.descriptors.get("window.frameElement", client.global);
                         if (!frame.name) {
-                            // the parent frame is not scramjet-controlled, so we can't get a parent frame name
+                            
                             dbg.error("YOU NEED TO USE `new NveFrame()`! DIRECT IFRAMES WILL NOT WORK");
                             return null;
                         }
@@ -703,7 +703,7 @@ return { apply, construct };
                         if (this.box.instanceof(err.stack, "Object")) {
                             //i'm not going to explain this
                             err.stack = err.stack.stack;
-                            // eslint-disable-next-line scramjet-core/no-globals
+                            
                             console.error("ERROR FROM SCRAMJET INTERNALS", err);
                             if (!this.flagEnabled("allowFailedIntercepts")) {
                                 _shared_snapshot__rspack_import_10.Error.prepareStackTrace = pst;
@@ -870,17 +870,17 @@ __webpack_require__.d(__webpack_exports__, {
         "Attr.prototype.nodeValue"
     ], {
         get (ctx) {
-            // eslint-disable-next-line scramjet-core/no-poisoned-ctx-value
+            
             if (ctx.this?.ownerElement) {
-                // eslint-disable-next-line scramjet-core/no-poisoned-ctx-value
+                
                 return ctx.this.ownerElement.getAttribute(ctx.this.name);
             }
             return ctx.get();
         },
         set (ctx, value) {
-            // eslint-disable-next-line scramjet-core/no-poisoned-ctx-value
+            
             if (ctx.this?.ownerElement) {
-                // eslint-disable-next-line scramjet-core/no-poisoned-ctx-value
+                
                 return ctx.this.ownerElement.setAttribute(ctx.this.name, value);
             }
             return ctx.set(value);
@@ -1710,7 +1710,7 @@ function collectAttributeMap(client, element, overrideName, overrideValue) {
         apply (ctx) {
             const doc = ctx.call();
             if (doc) {
-                // we trap the contentDocument, this is really the scramjet version
+                
                 return ctx.return(ctx.this.contentDocument);
             }
         }
@@ -1857,7 +1857,7 @@ __webpack_require__.d(__webpack_exports__, {
             const realwin = ctx.call();
             if (!realwin) return ctx.return(realwin);
             if (!(_symbols__rspack_import_0.SCRAMJETCLIENT in realwin)) {
-                // i don't believe it's possible for a just-opened window to already have scramjet loaded but just in case
+                
                 client.init.hookSubcontext(realwin);
             }
             return realwin;
@@ -1869,7 +1869,7 @@ __webpack_require__.d(__webpack_exports__, {
             if (!f) return f;
             const win = f.ownerDocument.defaultView;
             if (win[_symbols__rspack_import_0.SCRAMJETCLIENT]) {
-                // then this is a subframe in a scramjet context, and it's safe to pass back the real iframe
+                
                 return f;
             } else {
                 // no, the top frame is outside the sandbox
@@ -2060,7 +2060,7 @@ __webpack_require__.d(__webpack_exports__, {
   iswindow: () => (iswindow),
   isworker: () => (isworker)
 });
-// entrypoint for scramjet.client.js
+
 const iswindow = "window" in globalThis && window instanceof Window;
 const isworker = "WorkerGlobalScope" in globalThis;
 const issw = "ServiceWorkerGlobalScope" in globalThis;
@@ -2279,7 +2279,7 @@ __webpack_require__.d(__webpack_exports__, {
     client.Proxy("URL.revokeObjectURL", {
         apply (ctx) {
             setTimeout(()=>{
-                // scramjet rewrites blob urls to pass through the service worker first
+                
                 // this is neccesary if rewrites need to be applied to the blob
                 // the issue is that if you call revokeObjectURL immediately after using the blob
                 // the service worker will not have had time to download the blob
@@ -2474,14 +2474,14 @@ __webpack_require__.d(__webpack_exports__, {
 
 const enabled = (client)=>client.flagEnabled("cleanErrors");
 /* export default */ function __rspack_default_export(client, _self) {
-    // v8 only. all we need to do is clean the scramjet urls from stack traces
+    
     const closure = (error, stack)=>{
         let newstack = error.stack;
         for(let i = 0; i < stack.length; i++){
             const url = stack[i].getFileName();
             try {
                 if (client.config.maskedfiles.some((f)=>url.endsWith(f))) {
-                    // strip stack frames including scramjet handlers from the trace
+                    
                     const lines = newstack.split("\n");
                     const line = lines.find((l)=>l.includes(url));
                     lines.splice(line, 1);
@@ -2520,7 +2520,7 @@ __webpack_require__.d(__webpack_exports__, {
 
 /* export default */ function __rspack_default_export(client, self) {
     // used for proxying *direct eval*
-    // eval("...") -> eval($scramjet$rewrite("..."))
+    
     (0,_shared_snapshot__rspack_import_1.Object_defineProperty)(self, client.config.globals.rewritefn, {
         value: function(js) {
             // if eval is called on anything other than a string, we should just return it unchanged
@@ -2884,12 +2884,12 @@ __webpack_require__.d(__webpack_exports__, {
             }
             // and now we can steal Function from the caller's realm
             const { constructor: { constructor: Function } } = pollutant;
-            // invoking stolen function will give us the caller's globalThis, remember scramjet has already proxied it!!!
+            
             const callerGlobalThisProxied = Function("return globalThis")();
             const callerClient = callerGlobalThisProxied[_symbols__rspack_import_1.SCRAMJETCLIENT];
             // this WOULD be enough but the source argument of MessageEvent has to return the caller's window
             // and if we just call it normally it would be coming from here, which WILL NOT BE THE CALLER'S because the accessor is from the parent
-            // so with the stolen function we wrap postmessage so the source will truly be the caller's window (remember that function is scramjet's!!!)
+            
             const wrappedPostMessage = Function("...args", "this(...args)");
             // console.log(
             // 	callerClient,
@@ -3627,7 +3627,7 @@ function extractTag(fn) {
     // it will look like this:
     // function name()[possible whitespace]/*scramtag [index] [tag]*/[possible whitespace]{ ... }
     const start = fn.indexOf(SCRAMTAG);
-    // no scramtag, probably native function or stolen from scramjet
+    
     if (start === -1) return null;
     const end = fn.indexOf("*/", start);
     if (end === -1) {
@@ -3742,7 +3742,7 @@ __webpack_require__.d(__webpack_exports__, {
         // 		"Worker.prototype.postMessage",
         // 		worker,
         // 		{
-        // 			$scramjet$type: "baremuxinit",
+        
         // 			port,
         // 		},
         // 		[port]
@@ -3772,7 +3772,7 @@ __webpack_require__.d(__webpack_exports__, {
         // 		"MessagePort.prototype.postMessage",
         // 		worker.port,
         // 		{
-        // 			$scramjet$type: "baremuxinit",
+        
         // 			port,
         // 		},
         // 		[port]
@@ -3819,7 +3819,7 @@ function createWrapFn(client, self) {
             // accessing self.parent can throw if it's cross-origin, in which case we should also pretend we aren't nested
             wrappedParent = self;
         }
-        // instead of returning top, we need to return the uppermost parent that's inside a scramjet context
+        
         let current = self;
         for(;;){
             const test = current.parent.self;
@@ -3940,7 +3940,7 @@ const order = 4;
         return v;
     };
     // location = "..." can't be rewritten as wrapfn(location) = ..., so instead it will actually be rewritten as
-    // ((t)=>$scramjet$tryset(location,"+=",t)||location+=t)(...);
+    
     // it has to be a discrete function because there's always the possibility that "location" is a local variable
     // we have to use an IIFE to avoid duplicating side-effects in the getter
     (0,_shared_snapshot__rspack_import_2.Object_defineProperty)(self, client.config.globals.trysetfn, {
@@ -4001,7 +4001,7 @@ class SingletonBox {
             return false;
         }
         for (const ctor of ctors){
-            // eslint-disable-next-line scramjet-core/no-instanceof
+            
             if (obj instanceof ctor) return true;
         }
         return false;
@@ -4389,7 +4389,7 @@ async function rewriteResponseHeaders(handler, request, parsed, rawHeaders) {
     if (headers.get("accept") === "text/event-stream") {
         headers.set("content-type", "text/event-stream");
     }
-    // scramjet runtime can use features that permissions-policy blocks
+    
     headers.delete("permissions-policy");
     // we handle this ourselves
     headers.delete("set-cookie");
@@ -4411,7 +4411,7 @@ async function rewriteResponseHeaders(handler, request, parsed, rawHeaders) {
 }
 function rewriteRequestHeaders(request, handler, parsed) {
     const headers = request.initialHeaders.clone();
-    // avoid leaking the scramjet referer
+    
     headers.delete("Referer");
     const rawOriginUrl = parsed.referrerSourceUrl !== undefined ? parsed.referrerSourceUrl : request.rawClientUrl || (request.rawReferrer ? new _shared_snapshot__rspack_import_1._URL(request.rawReferrer) : undefined);
     const originUrl = rawOriginUrl && rawOriginUrl.pathname.startsWith(handler.context.prefix.pathname) ? new _shared_snapshot__rspack_import_1._URL((0,_shared__rspack_import_0.unrewriteUrl)(rawOriginUrl, handler.context)) : rawOriginUrl;
@@ -4533,29 +4533,7 @@ function rewriteRequestHeaders(request, handler, parsed) {
     // sharedworker, serviceworker, ...) default to credentials="include".
     return true;
 }
-/**
- * Determine the Sec-Fetch-Mode value for a request.
- *
- * The browser's `event.request.mode` reported in the SW is unsafe to trust
- * for `fetch()` / `new Request()` calls — those compute mode against the
- * request URL's relationship to the page, and scramjet has rewritten the URL
- * to be same-origin to the page, so the SW always sees "same-origin"
- * regardless of the page's actual `init.mode`. For HTML resource fetches
- * (`<script crossorigin>`, `<img crossorigin>`, …) the mode is derived from
- * the element's CORS attribute rather than URL origin, so the SW's reported
- * mode IS reliable there.
- *
- * Resolution order:
- *   1. `parsed.fetchMode` — set by the client-side fetch / Request proxy from
- *      `init.mode` (or fetch's "cors" default). Authoritative for
- *      page-initiated fetch / Request / XHR-style calls.
- *   2. Top-level navigations: always "navigate".
- *   3. Workers: classic → "same-origin", module → "cors".
- *   4. Everything else: trust the SW's `request.mode` (it reflects the
- *      element's CORS attribute), falling back to "no-cors" if it's missing
- *      or implausible (e.g. "same-origin" / "navigate" leaking in from a
- *      proxy-URL computation).
- */ function computeFetchMode(request, parsed) {
+  function computeFetchMode(request, parsed) {
     if (parsed.fetchMode) return parsed.fetchMode;
     const dest = parsed.destination;
     if (dest === "document" || dest === "iframe" || dest === "frame" || dest === "embed" || dest === "object") {
@@ -4569,7 +4547,7 @@ function rewriteRequestHeaders(request, handler, parsed) {
     // element's CORS attribute (`<script crossorigin>` ⇒ "cors", plain
     // `<script>` ⇒ "no-cors"), so trust it. Reject "same-origin"/"navigate"
     // since those indicate the value came from URL-origin matching against
-    // scramjet's proxy origin and is meaningless to the destination.
+    
     if (request.mode === "cors" || request.mode === "no-cors") {
         return request.mode;
     }
@@ -4595,7 +4573,7 @@ function rewriteRequestHeaders(request, handler, parsed) {
     if (candidate.pathname.startsWith(handler.context.prefix.pathname)) {
         return new _shared_snapshot__rspack_import_1._URL((0,_shared__rspack_import_0.unrewriteUrl)(candidate, handler.context));
     }
-    // The candidate URL is outside scramjet's logical space (e.g. the runway
+    
     // harness wrapper page, or a chrome:// page kicking off a navigation).
     // There's no meaningful "initiator" in the proxied site's frame of
     // reference, so treat it as a browser-initiated request — Sec-Fetch-Site
@@ -4730,7 +4708,7 @@ class NveFetchTrackedClient {
         this.clientId = clientId;
     }
 }
-// eslint-disable-next-line scramjet-core/no-globals
+
 class NveFetchHandler extends EventTarget {
     client;
     crossOriginIsolated = false;
@@ -4964,15 +4942,15 @@ __webpack_require__.d(__webpack_exports__, {
 // import { flagEnabled } from "@/shared";
 
 const logfuncs = {
-    // eslint-disable-next-line scramjet-core/no-globals
+    
     log: console.log,
-    // eslint-disable-next-line scramjet-core/no-globals
+    
     warn: console.warn,
-    // eslint-disable-next-line scramjet-core/no-globals
+    
     error: console.error,
-    // eslint-disable-next-line scramjet-core/no-globals
+    
     debug: console.debug,
-    // eslint-disable-next-line scramjet-core/no-globals
+    
     info: console.info
 };
 /* export default */ const __rspack_default_export = ({
@@ -5170,7 +5148,7 @@ class CookieJar {
                 for (const cookie of bucket){
                     if (cookie.expires !== undefined && cookie.expires < now) continue;
                     if (cookie.hostOnly && key !== hostname) continue;
-                    // Scramjet proxies all origins as HTTPS (including those served over HTTP),
+                    
                     // so we don't enforce the Secure attribute based on protocol here.
                     // if (cookie.secure && url.protocol !== "https:") continue;
                     if (cookie.httpOnly && fromJs) continue;
@@ -6397,7 +6375,7 @@ __webpack_require__.d(__webpack_exports__, {
 
 
 
-// eslint-disable-next-line scramjet-core/no-globals
+
 Error.stackTraceLimit = 50;
 function rewriteJsWasm(input, source, context, meta, isModule) {
     const [rewriter, ret] = (0,_rewriters_wasm__rspack_import_1.getRewriter)(context, meta);
@@ -7950,10 +7928,7 @@ const SCRAMJETCLIENT = (0,_shared_snapshot__rspack_import_0.Symbol_for)(SCRAMJET
 },
 "./packages/core/src/types.ts"(__unused_rspack_module, __webpack_exports__, __webpack_require__) {
 __webpack_require__.r(__webpack_exports__);
-/**
- * Version information for the current Scramjet build.
- * Contains both the semantic version string and the git commit hash for build identification.
- */ //eslint-disable-next-line
+  //eslint-disable-next-line
 
 
 
@@ -13141,9 +13116,9 @@ __webpack_require__.d(__webpack_exports__, {
 /* import */ var _fetch__rspack_import_7 = __webpack_require__("./packages/core/src/fetch/index.ts");
 /* import */ var _mercuryworkshop_proxy_transports__rspack_import_8 = __webpack_require__("./node_modules/.pnpm/@mercuryworkshop+proxy-transports@1.0.2/node_modules/@mercuryworkshop/proxy-transports/dist/index.mjs");
 /* import */ var _client__rspack_import_9 = __webpack_require__("./packages/core/src/client/index.ts");
-// NOTE: this is the entrypoint for scramjet.bundle.js
-// as such it exports everything in scramjet
-// the entry point for scramjet.all.js (what most sites wil use) is entry.ts
+
+
+
 
 
 
@@ -13212,4 +13187,3 @@ if (false) {}
 self.$nve = __webpack_exports__;
 })()
 ;
-//# sourceMappingURL=scramjet.js.map

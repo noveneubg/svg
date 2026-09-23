@@ -79,7 +79,7 @@ function from_entries(entries) {
   return ret;
 }
 
-// node_modules/.pnpm/@mercuryworkshop+epoxy-tls@2.1.19-1/node_modules/@mercuryworkshop/epoxy-tls/full/epoxy-bundled.js
+
 var import_meta = {};
 var wasm;
 function addHeapObject(obj) {
@@ -425,37 +425,22 @@ var EpoxyClient = class {
   set buffer_size(arg0) {
     wasm.__wbg_set_epoxyclient_buffer_size(this.__wbg_ptr, arg0);
   }
-  /**
-   * @param {EpoxyUrlInput} url
-   * @returns {Promise<EpoxyIoStream>}
-   */
+   
   connect_tcp(url) {
     const ret = wasm.epoxyclient_connect_tcp(this.__wbg_ptr, addHeapObject(url));
     return takeObject(ret);
   }
-  /**
-   * @param {EpoxyUrlInput} url
-   * @returns {Promise<EpoxyIoStream>}
-   */
+   
   connect_tls(url) {
     const ret = wasm.epoxyclient_connect_tls(this.__wbg_ptr, addHeapObject(url));
     return takeObject(ret);
   }
-  /**
-   * @param {EpoxyUrlInput} url
-   * @returns {Promise<EpoxyIoStream>}
-   */
+   
   connect_udp(url) {
     const ret = wasm.epoxyclient_connect_udp(this.__wbg_ptr, addHeapObject(url));
     return takeObject(ret);
   }
-  /**
-   * @param {EpoxyHandlers} handlers
-   * @param {EpoxyUrlInput} url
-   * @param {string[]} protocols
-   * @param {EpoxyWebSocketHeadersInput} headers
-   * @returns {Promise<EpoxyWebSocket>}
-   */
+   
   connect_websocket(handlers, url, protocols, headers) {
     _assertClass(handlers, EpoxyHandlers);
     var ptr0 = handlers.__destroy_into_raw();
@@ -471,19 +456,12 @@ var EpoxyClient = class {
     const ret = wasm.epoxyclient_replace_stream_provider(this.__wbg_ptr);
     return takeObject(ret);
   }
-  /**
-   * @param {EpoxyUrlInput} url
-   * @param {object} options
-   * @returns {Promise<Response>}
-   */
+   
   fetch(url, options) {
     const ret = wasm.epoxyclient_fetch(this.__wbg_ptr, addHeapObject(url), addHeapObject(options));
     return takeObject(ret);
   }
-  /**
-   * @param {EpoxyWispTransport} transport
-   * @param {EpoxyClientOptions} options
-   */
+   
   constructor(transport, options) {
     _assertClass(options, EpoxyClientOptions);
     var ptr0 = options.__destroy_into_raw();
@@ -772,10 +750,7 @@ var EpoxyWebSocket = class _EpoxyWebSocket {
     const ptr = this.__destroy_into_raw();
     wasm.__wbg_epoxywebsocket_free(ptr, 0);
   }
-  /**
-   * @param {EpoxyWebSocketInput} payload
-   * @returns {Promise<void>}
-   */
+   
   send(payload) {
     const ret = wasm.epoxywebsocket_send(this.__wbg_ptr, addHeapObject(payload));
     return takeObject(ret);
@@ -1624,9 +1599,9 @@ var NveTransport = class {
   }
   connect(url, protocols, requestHeaders, onopen, onmessage, onclose, onerror) {
     let handlers = new EpoxyHandlers(
-      // epoxy does not support getting the server selected protocol/extension
+      
       () => onopen("", ""),
-      // epoxy does not support getting close code/reason
+      
       () => onclose(1e3, "Closed by remote"),
       onerror,
       (data) => (
